@@ -114,12 +114,7 @@ def run_length(stats, num_in_control, ucl):
         stats: the first component output from any of the mitten control chart methods
         num_in_control: the number of in control rows in the dataset that was fed into the control chart method
                         (should be equal to the parameter passed to the mitten control chart method)
-        alpha: the percentage of in control points that will lie below the control line 
-                (typically alpha = .05, this is a trade off between false positives and
-                a shorter run length time to detect anomalies)
-        step_size: parameter that specifies how far the ucl moves each step. As this number
-                    increases, accuracy and runtime decreases.
-
+        ucl: Upper Control Limit
     Returns:
          Run length, the number of out of control observations before an anomaly signal is observed
     """
@@ -173,20 +168,20 @@ def ARL_Study(mean_shift_list, sims_per_shift=1000, feature_to_shift=6, sd_or_me
             n_in_control = 1000-30
             n_out_control = 30
             
-            stats, _ = mitten.hotelling_t2(data, n_in_control, plotting=False)  
-            run_l, _ = run_length(stats, n_in_control, .01)
+            stats, ucl = mitten.hotelling_t2(data, n_in_control, plotting=False)  
+            run_l = run_length(stats, n_in_control, ucl)
             hotel_run_list.append(run_l)
 
-            stats, _ = mitten.apply_mewma(data, n_in_control, plotting=False)
-            run_l, _ = run_length(stats, n_in_control, .01)
+            stats, ucl = mitten.apply_mewma(data, n_in_control, plotting=False)
+            run_l = run_length(stats, n_in_control, ucl)
             mewma_run_list.append(run_l)
 
-            stats, _ = mitten.mcusum(data, n_in_control, 2, plotting=False)
-            run_l, _ = run_length(stats, n_in_control, .01)
+            stats, ucl = mitten.mcusum(data, n_in_control, 2, plotting=False)
+            run_l = run_length(stats, n_in_control, ucl)
             mcusum_run_list.append(run_l)
 
-            stats, _ = mitten.pc_mewma(data, n_in_control, 45, plotting=False) # use 45 PC's
-            run_l, _ = run_length(stats, n_in_control, .01)
+            stats, ucl = mitten.pc_mewma(data, n_in_control, 45, plotting=False) # use 45 PC's
+            run_l = run_length(stats, n_in_control, ucl)
             pc_mewma_run_list.append(run_l)
 
             sims_run += 1 # cant use walrus bc colab running python 3.6 *sad walrus* :(=
